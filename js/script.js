@@ -28,20 +28,6 @@ form.onsubmit = (event) => {
     errorMessage.innerHTML = "Please, enter valid username";
     return;
   }
-  console.log("submit");
-};
-
-username.oninput = () => {
-  const isErrorField = username.classList.contains("error");
-
-  if (isErrorField) {
-    username.classList.remove("error");
-    errorMessage.innerHTML = "";
-  }
-};
-
-add.onclick = () => {
-    
     let li = document.createElement('li');
     ulNode.appendChild(li);
     li.innerHTML = username.value;
@@ -51,7 +37,16 @@ add.onclick = () => {
     li.appendChild(button);
     button.innerHTML = "Delete";
     button.classList.add("remove-button");
+  
+};
 
+username.oninput = () => {
+  const isErrorField = username.classList.contains("error");
+
+  if (isErrorField) {
+    username.classList.remove("error");
+    errorMessage.innerHTML = "";
+  } 
 };
 
 ulNode.addEventListener("click", (event) => {
