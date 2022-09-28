@@ -12,42 +12,67 @@
 // Добавлять атрибуты, классы и тд можно по своему усмотрению.
 
 
+// К Todolist из предыдущего домашнего задания необходимо добавить:
+// - У каждого элемента LI будет внутри также checkbox - перед текстом
+// - При нажатии на этот checkbox - кнопка и checkbox должны стать неактивными (disabled), а текст внутри LI должен быть зачеркнутым. 
+// Это будет значить что Todo выполнена
+// Рекомендации: можете применить Bootstrap для стилизации данного задания
+
+
 const form = document.forms.worksheet;
-const { username } = form;
+const taskInput = document.querySelector('#task_input');
 const { add } = document.forms.worksheet.elements;
 
 const ulNode = document.getElementById("list");
 const errorMessage = document.querySelector(".error-message");
+const button = document.querySelector("button");
 
 
-form.onsubmit = (event) => {
+form.addEventListener('submit', addTask);
+
+function addTask(event) {
   event.preventDefault();
 
-  if (username.value.trim().length === 0) {
-    username.classList.add("error");
-    errorMessage.innerHTML = "Please, enter valid username";
+  const taskText = taskInput.value;
+
+  if (taskText.trim().length === 0) {
+    taskInput.classList.add("error");
+    errorMessage.innerHTML = "Please, enter valid task";
     return;
   }
-    let li = document.createElement('li');
-    ulNode.appendChild(li);
-    li.innerHTML = username.value;
-    li.classList.add("username");
 
-    let button = document.createElement('button');
-    li.appendChild(button);
-    button.innerHTML = "Delete";
-    button.classList.add("remove-button");
+  taskInput.value = "";
+  taskInput.focus();
+
+  const li = document.createElement('li');
+  ulNode.appendChild(li);
+  li.innerHTML = taskText;
+  li.classList.add("task");
+
+  const btn = document.createElement('button');
+  li.appendChild(btn);
+  btn.innerHTML = "Delete";
+  btn.classList.add("remove-button");
   
-};
+  const checkbox = document.createElement("input");
+  li.appendChild(checkbox);
+  checkbox.setAttribute("type", "checkbox");
+  li.insertAdjacentElement('afterbegin', checkbox);
+  checkbox.classList.add("check");
+}
 
-username.oninput = () => {
-  const isErrorField = username.classList.contains("error");
+
+taskInput.oninput = () => {
+  const isErrorField = taskInput.classList.contains("error");
 
   if (isErrorField) {
-    username.classList.remove("error");
+    taskInput.classList.remove("error");
     errorMessage.innerHTML = "";
   } 
 };
+
+
+//Удалить задачу..
 
 ulNode.addEventListener("click", (event) => {
 
@@ -55,14 +80,28 @@ ulNode.addEventListener("click", (event) => {
 
     if (isRemoveButton) {
         const removeButton = event.target;
-        const username = removeButton.closest(".username");
-        username.remove();
+        const taskInput = removeButton.closest(".task");
+        taskInput.remove();
     }
 });
 
-username.onclick = function() {
-    username.value = "";
-};
 
+//Отмечаем задачу завершенной..
 
+ulNode.addEventListener('change', doneTask)
 
+function doneTask(event) {
+
+  const isChecked = event.target.tagName === "INPUT";
+
+  if (isChecked) {
+    const checked = event.target;
+    checked.setAttribute('disabled', 'true');
+
+    const taskInput = checked.closest('.task');
+    taskInput.classList.toggle('checked');
+
+    const btn = taskInput.querySelector('.remove-button')
+    btn.disabled = true;
+  }
+}
